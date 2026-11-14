@@ -1,1 +1,1 @@
-# Pnuemonia-Triage
+# Pneumonia-Triage
