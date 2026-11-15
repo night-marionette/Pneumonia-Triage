@@ -103,7 +103,7 @@ The Gradio app allows users to upload an X-ray, adjust the classification thresh
 
 The threshold slider changes the classification label; it does not change the raw scores or the ordering of a queue sorted by those scores. The model was trained on public images of children aged 1–5 from one hospital; performance on other populations is unknown. Use public, de-identified sample images for demonstrations.
 
-*(Temporary Gradio link from the supplied notebook: **[Open demo](https://c9abac0dc7b90518bb.gradio.live)**. This link requires the serving session to remain active and may expire. Permanent hosting has not been confirmed.)*
+*(Availability note: The public Gradio demo link is currently offline because temporary Colab `gradio.live` tunnels expire when the serving runtime stops. The app runs conditionally whenever the Gradio cell in [`01_model.ipynb`](https://github.com) is executed in an active Google Colab session with the trained weights loaded.)*
 
 ## 🚀 How to Run
 1. Open the latest DenseNet-121 version of `01_model.ipynb` in Google Colab. Install any missing dependencies, including PyTorch, torchvision, kagglehub, scikit-learn, pandas, NumPy, matplotlib and Pillow. The notebook installs Gradio and grad-cam in its demo cells.
