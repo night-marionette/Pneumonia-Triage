@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description"
+        content="Pneumonia Triage: a student project exploring AI scores, reading order, and waiting times.">
+  <title>Pneumonia Triage | Vova & Danyal</title>
+
+  <style>
+    :root {
+      --bg: #f5f8fa;
+      --ink: #142d39;
+      --muted: #506773;
+      --teal: #087e83;
+      --line: #dce5e9;
+    }
+
+    * { box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: system-ui, -apple-system, sans-serif;
+      line-height: 1.65;
+    }
+
+    a { color: var(--teal); }
+
+    a:focus-visible, summary:focus-visible {
+      outline: 3px solid #d08b00;
+      outline-offset: 5px;
+    }
+
+    .wrap {
+      width: min(1080px, 90%);
+      margin: auto;
+    }
+
+    header {
+      background: white;
+      border-bottom: 1px solid var(--line);
+    }
+
+    nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      flex-wrap: wrap;
+      padding: 20px 0;
+    }
+
+    .brand {
+      font-size: 1.1rem;
+      font-weight: 800;
+      text-decoration: none;
+      color: var(--ink);
+    }
+
+    .navlinks {
+      display: flex;
+      gap: 22px;
+      flex-wrap: wrap;
+      font-size: .9rem;
+    }
+
+    .navlinks a {
+      text-decoration: none;
+      color: var(--muted);
+    }
+
+    .hero {
+      padding: 88px 0 64px;
+      max-width: 820px;
+    }
+
+    .eyebrow {
+      color: var(--teal);
+      font-size: .8rem;
+      font-weight: 800;
+      letter-spacing: .13em;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      font-size: clamp(2.6rem, 6vw, 4.8rem);
+      line-height: 1.08;
+      letter-spacing: -.045em;
+      margin: 18px 0 24px;
+    }
+
+    h2 {
+      font-size: clamp(1.6rem, 3vw, 2.2rem);
+      line-height: 1.2;
+      letter-spacing: -.025em;
+      margin-top: 0;
+    }
+
+    h3 { line-height: 1.3; }
+
+    .lead {
+      font-size: 1.15rem;
+      color: var(--muted);
+      max-width: 690px;
+    }
+
+    .actions {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin: 28px 0;
+    }
+
+    .button {
+      display: inline-block;
+      padding: 12px 20px;
+      border-radius: 9px;
+      background: var(--teal);
+      color: white;
+      text-decoration: none;
+      font-weight: 700;
+    }
+
+    .button.secondary {
+      background: white;
+      color: var(--ink);
+      border: 1px solid var(--line);
+    }
+
+    .notice {
+      padding: 15px 20px;
+      background: #fff5dc;
+      border-left: 4px solid #bb7b00;
+      border-radius: 4px;
+      font-size: .9rem;
+    }
+
+    section {
+      padding: 54px 0;
+      border-bottom: 1px solid var(--line);
+      scroll-margin-top: 24px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 18px;
+      margin-top: 26px;
+    }
+
+    .card {
+      background: white;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 25px;
+    }
+
+    .card p {
+      color: var(--muted);
+      margin-bottom: 0;
+    }
+
+    .number {
+      color: var(--teal);
+      font-weight: 800;
+      font-size: 2.4rem;
+      line-height: 1.2;
+    }
+
+    .label {
+      font-size: .9rem;
+      color: var(--muted);
+      margin-top: 8px;
+    }
+
+    .table-wrap {
+      overflow-x: auto;
+      margin-top: 24px;
+      background: white;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+    }
+
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      text-align: left;
+    }
+
+    th, td {
+      padding: 15px 18px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    th {
+      background: #eaf2f4;
+      font-size: .9rem;
+    }
+
+    tr:last-child td { border-bottom: 0; }
+
+    .small {
+      color: var(--muted);
+      font-size: .9rem;
+    }
+
+    .status {
+      display: inline-block;
+      background: #fff0c6;
+      color: #684700;
+      border-radius: 30px;
+      padding: 5px 12px;
+      font-size: .8rem;
+      font-weight: 700;
+    }
+
+    details {
+      background: white;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 18px 22px;
+      margin: 12px 0;
+    }
+
+    summary {
+      cursor: pointer;
+      font-weight: 700;
+    }
+
+    footer {
+      padding: 36px 0;
+      color: var(--muted);
+      font-size: .9rem;
+    }
+
+    @media (max-width: 700px) {
+      .grid { grid-template-columns: 1fr; }
+      .hero { padding: 55px 0 35px; }
+      section { padding: 38px 0; }
+      th, td { padding: 12px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <nav class="wrap" aria-label="Main navigation">
+      <a class="brand" href="#">Pneumonia Triage<span aria-hidden="true"> ↗</span></a>
+      <div class="navlinks">
+        <a href="#project">Project</a>
+        <a href="#results">Results</a>
+        <a href="#queue">Queue</a>
+        <a href="#demo">Demo</a>
+      </div>
+    </nav>
+  </header>
+
+  <main class="wrap">
+    <div class="hero">
+      <div class="eyebrow">Veritas AI Hackathon · Health Track</div>
+      <h1>Which X-ray<br>should come first?</h1>
+      <p class="lead">
+        AI can help prioritize suspected pneumonia. But what happens
+        to the scan it gets wrong? We investigate the effect of model
+        mistakes on a doctor's waiting line.
+      </p>
+
+      <div class="actions">
+        <a class="button" href="#results">Explore the results</a>
+        <a class="button secondary"
+           href="https://github.com/night-marionette/Pneumonia-Triage">
+          View our code
+        </a>
+      </div>
+
+      <p class="small">Built by <strong>Vova & Danyal</strong></p>
+
+      <div class="notice">
+        Research prototype. Not for clinical use or medical advice.
+        A pneumonia score is not a measure of clinical urgency.
+      </div>
+    </div>
+
+    <section id="project">
+      <div class="eyebrow">Our approach</div>
+      <h2>From a prediction to a reading order.</h2>
+      <p>
+        We combine an image classifier with a simulation of one doctor
+        reading chest X-rays. Our question is not just how accurate the
+        model is, but who waits longer when its predictions are wrong.
+      </p>
+
+      <div class="grid">
+        <article class="card">
+          <div class="eyebrow">01 · Score</div>
+          <h3>Identify suspected pneumonia</h3>
+          <p>
+            Danyal fine-tuned ResNet-18 to produce a pneumonia score
+            between 0 and 1 for each test X-ray.
+          </p>
+        </article>
+
+        <article class="card">
+          <div class="eyebrow">02 · Simulate</div>
+          <h3>Compare the waiting lines</h3>
+          <p>
+            Vova's simulation compares four reading-order rules,
+            using the same scans and reading times within each run.
+          </p>
+        </article>
+
+        <article class="card">
+          <div class="eyebrow">03 · Investigate</div>
+          <h3>Look closely at mistakes</h3>
+          <p>
+            We measure delays for low-scoring pneumonia scans and
+            investigate whether prioritizing overdue scans helps.
+          </p>
+        </article>
+      </div>
+    </section>
+
+    <section id="results">
+      <div class="eyebrow">Saved model output</div>
+      <h2>High recall. Real limitations.</h2>
+      <p>
+        The uploaded model notebook reports these results on 624 test
+        images, using a classification threshold of 0.5.
+      </p>
+
+      <div class="grid">
+        <div class="card">
+          <div class="number">82.2%</div>
+          <div class="label">Overall accuracy</div>
+        </div>
+        <div class="card">
+          <div class="number">99.7%</div>
+          <div class="label">Pneumonia recall</div>
+        </div>
+        <div class="card">
+          <div class="number">1 / 390</div>
+          <div class="label">Pneumonia scans missed</div>
+        </div>
+      </div>
+
+      <div class="table-wrap" tabindex="0"
+           role="region" aria-label="Model results comparison">
+        <table>
+          <thead>
+            <tr>
+              <th scope="col">Measure</th>
+              <th scope="col">Always predict pneumonia</th>
+              <th scope="col">ResNet-18</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>Accuracy</td><td>62.5%</td><td>82.2%</td></tr>
+            <tr><td>Pneumonia recall</td><td>100%</td><td>99.7%</td></tr>
+            <tr><td>Missed pneumonia</td><td>0</td><td>1</td></tr>
+            <tr><td>False alarms</td><td>234</td><td>110</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p class="small">
+        Test set: 390 pneumonia and 234 normal images.
+        Results describe this model run and dataset, not clinical performance.
+      </p>
+    </section>
+
+    <section id="queue">
+      <div class="eyebrow">The workflow experiment</div>
+      <h2>Same scans. Four different rules.</h2>
+
+      <div class="table-wrap" tabindex="0"
+           role="region" aria-label="Queue rules">
+        <table>
+          <thead>
+            <tr>
+              <th scope="col">Rule</th>
+              <th scope="col">Which scan goes next?</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>FIFO</strong></td>
+              <td>The oldest waiting scan. Our baseline.</td>
+            </tr>
+            <tr>
+              <td><strong>SCORE</strong></td>
+              <td>The waiting scan with the highest pneumonia score.</td>
+            </tr>
+            <tr>
+              <td><strong>SCORE + CAP</strong></td>
+              <td>The oldest overdue scan; otherwise the highest score.</td>
+            </tr>
+            <tr>
+              <td><strong>PERFECT</strong></td>
+              <td>True pneumonia first. A reference using known labels.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p>
+        Our design uses one doctor, 30 initial scans, an average arrival
+        gap of 5 minutes and an average reading time of 4.5 minutes.
+        Arrivals stop after eight hours; reading continues until the
+        queue is empty.
+      </p>
+
+      <p>
+        We plan to summarize 500 runs and compare pneumonia shares of
+        10%, 25% and 60%, plus waiting thresholds of 30, 60 and 120 minutes.
+        These settings are assumptions, not hospital measurements.
+      </p>
+
+      <div class="card">
+        <span class="status">Queue results pending verification</span>
+        <h3>Evidence before conclusions.</h3>
+        <p>
+          Verified queue charts will appear here after checking that
+          the simulation uses the CSV from the reported model run.
+          We do not yet claim that score ordering or the cap improves waits.
+        </p>
+      </div>
+
+      <p class="small">
+        A cap raises priority; it does not guarantee a maximum wait.
+        PERFECT is an idealized reference, not an optimum for every metric.
+      </p>
+    </section>
+
+    <section id="demo">
+      <div class="eyebrow">Explore the model</div>
+      <h2>See how the project works.</h2>
+      <p>
+        Our model notebook includes a Grad-CAM visualization and a
+        Gradio image-upload demo. A live demo link has not yet been
+        connected to this website.
+      </p>
+
+      <a class="button secondary"
+         href="https://github.com/night-marionette/Pneumonia-Triage/blob/main/01_model.ipynb">
+        Open the model notebook
+      </a>
+
+      <p class="small">
+        Grad-CAM highlights regions contributing to a class score.
+        It does not prove the model avoids shortcuts or identify an
+        exact disease boundary.
+      </p>
+    </section>
+
+    <section id="limitations">
+      <div class="eyebrow">What we still need to learn</div>
+      <h2>Limitations matter.</h2>
+
+      <details>
+        <summary>Who does the dataset represent?</summary>
+        <p>
+          Children aged 1–5 from one hospital in Guangzhou. Performance
+          on adults or images from other hospitals remains unknown.
+          We used 4,434 training, 782 validation and 624 test images.
+        </p>
+      </details>
+
+      <details>
+        <summary>How reliable are the missed-case experiments?</summary>
+        <p>
+          This model run missed one original pneumonia image.
+          Repeatedly sampling its score cannot represent a wide range
+          of real model failures.
+        </p>
+      </details>
+
+      <details>
+        <summary>What needs improving in validation?</summary>
+        <p>
+          Patient separation has not been checked. The uploaded notebook
+          also applies random flips during validation; deterministic
+          preprocessing should be used instead.
+        </p>
+      </details>
+
+      <details>
+        <summary>Does prioritization make the doctor faster?</summary>
+        <p>
+          No. It changes the reading order. Some scans may wait less
+          while others wait longer. Simulation alone does not demonstrate
+          better clinical outcomes.
+        </p>
+      </details>
+    </section>
+
+    <section id="sources">
+      <div class="eyebrow">Built on existing research</div>
+      <h2>Sources & acknowledgments</h2>
+      <ul>
+        <li>
+          <a href="https://www.kaggle.com/datasets/paultimothymooney/chest-xray-pneumonia">
+            Kaggle Chest X-Ray Images (Pneumonia)
+          </a>
+          — Kermany et al., 2018;
+          <a href="https://doi.org/10.17632/rscbjbr9sj.2">
+            original dataset
+          </a>, CC BY 4.0.
+        </li>
+        <li>
+          <a href="https://doi.org/10.1007/s00330-020-07480-7">
+            Baltruschat et al.: Smart chest X-ray worklist prioritization
+          </a>
+          — online 2020; journal volume 2021.
+        </li>
+        <li>
+          <a href="https://docs.pytorch.org/vision/stable/models/generated/torchvision.models.resnet18.html">
+            Torchvision ResNet-18
+          </a>
+          — architecture by He et al.
+        </li>
+        <li>
+          <a href="https://arxiv.org/abs/1610.02391">Grad-CAM paper</a>
+          and
+          <a href="https://github.com/jacobgil/pytorch-grad-cam">
+            Jacob Gildenblat and contributors' implementation
+          </a>.
+        </li>
+      </ul>
+      <p class="small">
+        Software: PyTorch, torchvision, NumPy, pandas, matplotlib,
+        kagglehub, OpenCV, Pillow and Gradio.
+        Claude and ChatGPT supported coding, explanations and writing.
+      </p>
+    </section>
+  </main>
+
+  <footer class="wrap">
+    <strong>Pneumonia Triage · Vova & Danyal</strong><br>
+    Student research prototype. Not for clinical use or medical advice.
+  </footer>
+</body>
+</html>
